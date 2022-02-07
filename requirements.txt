@@ -4,3 +4,4 @@ selenium
 httpx
 pandas
 honcho
+celery
