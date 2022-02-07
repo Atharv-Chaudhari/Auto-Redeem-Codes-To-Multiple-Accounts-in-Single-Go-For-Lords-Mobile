@@ -1,4 +1,4 @@
-from flask import Flask,render_template
+from flask import Flask, render_template
 from httpx import request
 from celery import Celery
 import os
@@ -9,8 +9,9 @@ fapp.config['CELERY_BROKER_URL'] = 'amqps://chomczcf:uYRWuvJe_rt8J88KpZO45_2nNUS
 celery = Celery(fapp.name, broker=fapp.config['CELERY_BROKER_URL'])
 celery.conf.update(fapp.config)
 
+
 @celery.task(bind=True)
-def fun_all(self,code):
+def fun_all(self, code):
     from selenium import webdriver
     from selenium.webdriver.common.by import By
     import pandas as pd
@@ -36,9 +37,11 @@ def fun_all(self,code):
 
     # code=input()
 
-    driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"),options=options)
+    driver = webdriver.Chrome(executable_path=os.environ.get(
+        "CHROMEDRIVER_PATH"), options=options)
     driver.get("https://lordsmobile.igg.com/gifts/")
-    data=pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vStREOt4nVOvqHzL7M5JyW3OEbqXU5eH2o521cHRGE_8fiuSQpyzPKJXTf5queEFX_hu6XcLZfBYkAr/pub?output=csv")
+    data = pd.read_csv(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vStREOt4nVOvqHzL7M5JyW3OEbqXU5eH2o521cHRGE_8fiuSQpyzPKJXTf5queEFX_hu6XcLZfBYkAr/pub?output=csv")
     for i in data["ID"]:
         # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
         # driver.get("https://lordsmobile.igg.com/gifts/")
@@ -46,18 +49,19 @@ def fun_all(self,code):
         element.send_keys(i)
         element = driver.find_element(By.ID, "cdkey_1")
         element.send_keys(code)
-	element = driver.find_element(By.ID, "btn_claim_1").click()
+        element = driver.find_element(By.ID, "btn_claim_1").click()
         element = driver.find_element(By.ID, "btn_msg_close").click()
-	print("Redeemption Attempt Completed in ID :-",i)
-	# driver.close()
+        print("Redeemption Attempt Completed in ID :-", i)
+        # driver.close()
         driver.refresh()
         time.sleep(5)
 
     driver.close()
     # return c
 
+
 @celery.task(bind=True)
-def fun(self,code):
+def fun(self, code):
     from selenium import webdriver
     from selenium.webdriver.common.by import By
     import pandas as pd
@@ -83,9 +87,11 @@ def fun(self,code):
 
     # code=input()
 
-    driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"),options=options)
+    driver = webdriver.Chrome(executable_path=os.environ.get(
+        "CHROMEDRIVER_PATH"), options=options)
     driver.get("https://lordsmobile.igg.com/gifts/")
-    data=pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTtW5iFJu3zb3TB07eptxo7JExb4xCMTGy-s4rnSzzrm2je0m_eQCZMTikCPQiluMrmWO77dMaPfJc8/pub?output=csv")
+    data = pd.read_csv(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTtW5iFJu3zb3TB07eptxo7JExb4xCMTGy-s4rnSzzrm2je0m_eQCZMTikCPQiluMrmWO77dMaPfJc8/pub?output=csv")
     for i in data["ID"]:
         # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
         # driver.get("https://lordsmobile.igg.com/gifts/")
@@ -93,31 +99,34 @@ def fun(self,code):
         element.send_keys(i)
         element = driver.find_element(By.ID, "cdkey_1")
         element.send_keys(code)
-	element = driver.find_element(By.ID, "btn_claim_1").click()
+        element = driver.find_element(By.ID, "btn_claim_1").click()
         element = driver.find_element(By.ID, "btn_msg_close").click()
-	print("Redeemption Attempt Completed in ID :-",i)
-	# driver.close()
+        print("Redeemption Attempt Completed in ID :-", i)
+        # driver.close()
         driver.refresh()
         time.sleep(5)
 
     driver.close()
     # return c
 
-@fapp.route('/', methods=['POST','GET'])
+
+@fapp.route('/', methods=['POST', 'GET'])
 def Home():
-	return render_template("home.html")
+    return render_template("home.html")
 
-@fapp.route('/redeem',methods=['POST','GET'])
+
+@fapp.route('/redeem', methods=['POST', 'GET'])
 def redeem():
     from flask import request
     if request.method == 'POST':
-        print("The Redeem Code :-",request.form.get('code'))
+        print("The Redeem Code :-", request.form.get('code'))
         fun.delay(request.form.get('code'))
         fun_all.delay(request.form.get('code'))
         return render_template("task.html")
     else:
         return render_template("home.html")
 
+
 if __name__ == '__main__':
-	fapp.run(debug=True)
+    fapp.run(debug=True)
     # app.run(host='0.0.0.0', port=8080)
