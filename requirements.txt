@@ -5,3 +5,4 @@ httpx
 pandas
 honcho
 celery
+eventlet
