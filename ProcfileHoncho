@@ -1,2 +1,2 @@
-web: gunicorn app:app
-celery: celery -A Covid worker -l info -P eventlet --without-heartbeat --without-gossip --without-mingle
+web: gunicorn app:fapp
+celery: celery -A app worker -l info -P eventlet --without-heartbeat --without-gossip --without-mingle
