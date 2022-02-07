@@ -1,10 +1,15 @@
 from flask import Flask,render_template
 from httpx import request
-import os
+from celery import Celery
 
-app = Flask(__name__)
+fapp = Flask(__name__)
 
-def fun_all(code):
+fapp.config['CELERY_BROKER_URL'] = 'amqps://chomczcf:uYRWuvJe_rt8J88KpZO45_2nNUS2wYfI@gull.rmq.cloudamqp.com/chomczcf'
+celery = Celery(fapp.name, broker=fapp.config['CELERY_BROKER_URL'])
+celery.conf.update(fapp.config)
+
+@celery.task(bind=True)
+def fun_all(self,code):
     from selenium import webdriver
     from selenium.webdriver.common.by import By
     import pandas as pd
@@ -25,12 +30,11 @@ def fun_all(code):
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--no-sandbox')
-    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     # code=input()
 
-    driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"),options=options)
+    driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
     driver.get("https://lordsmobile.igg.com/gifts/")
     c=0
     data=pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vStREOt4nVOvqHzL7M5JyW3OEbqXU5eH2o521cHRGE_8fiuSQpyzPKJXTf5queEFX_hu6XcLZfBYkAr/pub?output=csv")
@@ -54,10 +58,10 @@ def fun_all(code):
         time.sleep(5)
 
     driver.close()
-    return c
+    # return c
 
-
-def fun(code):
+@celery.task(bind=True)
+def fun(self,code):
     from selenium import webdriver
     from selenium.webdriver.common.by import By
     import pandas as pd
@@ -78,17 +82,16 @@ def fun(code):
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--no-sandbox')
-    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     # code=input()
 
-    driver = webdriver.Chrome(executable_path = os.environ.get("CHROMEDRIVER_PATH"),options=options)
+    driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
     driver.get("https://lordsmobile.igg.com/gifts/")
     c=0
     data=pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTtW5iFJu3zb3TB07eptxo7JExb4xCMTGy-s4rnSzzrm2je0m_eQCZMTikCPQiluMrmWO77dMaPfJc8/pub?output=csv")
     for i in data["ID"]:
-        # driver = webdriver.Chrome(executable_path='https://github.com/Atharv-Chaudhari/Auto-Redeem-Codes-To-Multiple-Accounts-in-Single-Go-For-Lords-Mobile/blob/main/chromedriver.exe',options=options)
+        # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
         # driver.get("https://lordsmobile.igg.com/gifts/")
         element = driver.find_element(By.ID, "iggid")
         element.send_keys(i)
@@ -107,23 +110,23 @@ def fun(code):
         time.sleep(5)
 
     driver.close()
-    return c
+    # return c
 
-@app.route('/', methods=['POST','GET'])
+@fapp.route('/', methods=['POST','GET'])
 def Home():
 	return render_template("home.html")
 
-@app.route('/redeem',methods=['POST','GET'])
+@fapp.route('/redeem',methods=['POST','GET'])
 def redeem():
     from flask import request
     if request.method == 'POST':
-        print(request.form.get('code'))
-        c=fun(request.form.get('code'))
-        cn=fun_all(request.form.get('code'))
-        return render_template("task.html",c=c+cn)
+        print("The Redeem Code :-",request.form.get('code'))
+        fun.delay(request.form.get('code'))
+        fun_all.delay(request.form.get('code'))
+        return render_template("task.html")
     else:
         return render_template("home.html")
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	fapp.run(debug=True)
     # app.run(host='0.0.0.0', port=8080)
