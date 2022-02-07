@@ -1,2 +1,2 @@
-web: gunicorn Covid.wsgi --workers 1
+web: gunicorn app:app
 celery: celery -A Covid worker -l info -P eventlet --without-heartbeat --without-gossip --without-mingle
