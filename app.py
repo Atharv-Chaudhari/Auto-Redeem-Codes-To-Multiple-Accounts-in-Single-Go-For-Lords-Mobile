@@ -43,6 +43,8 @@ def fun_all(self, code):
     data = pd.read_csv(
         os.environ.get("data_all"))
     for i in data["ID"]:
+        if i is None:
+            continue
         # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
         # driver.get("https://lordsmobile.igg.com/gifts/")
         element = driver.find_element(By.ID, "iggid")
@@ -93,6 +95,8 @@ def fun(self, code):
     data = pd.read_csv(
         os.environ.get("data"))
     for i in data["ID"]:
+        if i is None:
+            continue
         # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
         # driver.get("https://lordsmobile.igg.com/gifts/")
         element = driver.find_element(By.ID, "iggid")
