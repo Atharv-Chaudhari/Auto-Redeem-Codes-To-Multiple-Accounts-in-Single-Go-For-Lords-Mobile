@@ -56,7 +56,7 @@ def fun_all(self, code):
             # driver.close()
             driver.refresh()
             time.sleep(5)
-        except exception as e:
+        except Exception as e:
             print(e)
             continue
 
@@ -110,7 +110,7 @@ def fun(self, code):
             # driver.close()
             driver.refresh()
             time.sleep(5)
-        except exception as e:
+        except Exception as e:
             print(e)
             continue
 
