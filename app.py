@@ -43,20 +43,22 @@ def fun_all(self, code):
     data = pd.read_csv(
         os.environ.get("data_all"))
     for i in data["ID"]:
-        if i is None:
+        try:
+            # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
+            # driver.get("https://lordsmobile.igg.com/gifts/")
+            element = driver.find_element(By.ID, "iggid")
+            element.send_keys(int(i))
+            element = driver.find_element(By.ID, "cdkey_1")
+            element.send_keys(code)
+            element = driver.find_element(By.ID, "btn_claim_1").click()
+            element = driver.find_element(By.ID, "btn_msg_close").click()
+            print("Redeemption Attempt Completed in ID :-", i)
+            # driver.close()
+            driver.refresh()
+            time.sleep(5)
+        except error as e:
+            print(e)
             continue
-        # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
-        # driver.get("https://lordsmobile.igg.com/gifts/")
-        element = driver.find_element(By.ID, "iggid")
-        element.send_keys(int(i))
-        element = driver.find_element(By.ID, "cdkey_1")
-        element.send_keys(code)
-        element = driver.find_element(By.ID, "btn_claim_1").click()
-        element = driver.find_element(By.ID, "btn_msg_close").click()
-        print("Redeemption Attempt Completed in ID :-", i)
-        # driver.close()
-        driver.refresh()
-        time.sleep(5)
 
     driver.close()
     # return c
@@ -95,20 +97,22 @@ def fun(self, code):
     data = pd.read_csv(
         os.environ.get("data"))
     for i in data["ID"]:
-        if i is None:
+        try:
+            # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
+            # driver.get("https://lordsmobile.igg.com/gifts/")
+            element = driver.find_element(By.ID, "iggid")
+            element.send_keys(int(i))
+            element = driver.find_element(By.ID, "cdkey_1")
+            element.send_keys(code)
+            element = driver.find_element(By.ID, "btn_claim_1").click()
+            element = driver.find_element(By.ID, "btn_msg_close").click()
+            print("Redeemption Attempt Completed in ID :-", i)
+            # driver.close()
+            driver.refresh()
+            time.sleep(5)
+        except error as e:
+            print(e)
             continue
-        # driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
-        # driver.get("https://lordsmobile.igg.com/gifts/")
-        element = driver.find_element(By.ID, "iggid")
-        element.send_keys(int(i))
-        element = driver.find_element(By.ID, "cdkey_1")
-        element.send_keys(code)
-        element = driver.find_element(By.ID, "btn_claim_1").click()
-        element = driver.find_element(By.ID, "btn_msg_close").click()
-        print("Redeemption Attempt Completed in ID :-", i)
-        # driver.close()
-        driver.refresh()
-        time.sleep(5)
 
     driver.close()
     # return c
