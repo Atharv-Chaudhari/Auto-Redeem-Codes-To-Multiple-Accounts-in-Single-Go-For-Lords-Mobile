@@ -95,8 +95,7 @@ def redeem():
     from flask import request
     if request.method == 'POST':
         print("The Redeem Code :-", request.form.get('code'))
-        url1=request.form.get('url1')
-        load_task.delay(request.form.get('code'),url1)
+        load_task.delay(request.form.get('code'),request.form.get('url1'))
         return render_template("task.html")
     else:
         return render_template("home.html")
