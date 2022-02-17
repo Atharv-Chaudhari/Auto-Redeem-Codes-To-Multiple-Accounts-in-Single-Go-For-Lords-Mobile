@@ -102,5 +102,5 @@ def redeem():
 
 
 if __name__ == '__main__':
-    fapp.run(debug=True)
+    fapp.run(debug=False)
     # app.run(host='0.0.0.0', port=8080)
