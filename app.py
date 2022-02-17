@@ -127,6 +127,7 @@ def Home():
 def redeem():
     from flask import request
     if request.method == 'POST':
+        import time
         print("The Redeem Code :-", request.form.get('code'))
         fun_all.delay(request.form.get('code'))
         time.sleep(2)
