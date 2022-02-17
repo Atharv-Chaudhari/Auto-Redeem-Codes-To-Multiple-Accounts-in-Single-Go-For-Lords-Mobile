@@ -129,6 +129,7 @@ def redeem():
     if request.method == 'POST':
         print("The Redeem Code :-", request.form.get('code'))
         fun_all.delay(request.form.get('code'))
+        time.sleep(2)
         fun.delay(request.form.get('code'))
         return render_template("task.html")
     else:
