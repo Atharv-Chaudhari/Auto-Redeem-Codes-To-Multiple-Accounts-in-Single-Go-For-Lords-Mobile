@@ -127,6 +127,7 @@ def Home():
 
 @fapp.route('/redeem', methods=['POST', 'GET'])
 def redeem():
+    global s_code
     from flask import request
     if request.method == 'POST':
         print("The Redeem Code :-", request.form.get('code'))
