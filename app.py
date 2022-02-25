@@ -3,6 +3,8 @@ from httpx import request
 from celery import Celery
 import os
 
+s_code=set()
+
 fapp = Flask(__name__)
 
 fapp.config['CELERY_BROKER_URL'] = os.environ.get("cloudamqp")
@@ -128,6 +130,8 @@ def redeem():
     from flask import request
     if request.method == 'POST':
         print("The Redeem Code :-", request.form.get('code'))
+        if str(request.form.get('code')) in list(s_code):
+            return render_template("home.html")
         fun.delay(request.form.get('code'))
         fun_all.delay(request.form.get('code'))
         return render_template("task.html")
