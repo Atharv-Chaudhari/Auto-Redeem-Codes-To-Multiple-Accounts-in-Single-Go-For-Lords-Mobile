@@ -135,6 +135,7 @@ def redeem():
             return render_template("home.html")
         fun.delay(request.form.get('code'))
         fun_all.delay(request.form.get('code'))
+        s_code.add(str(request.form.get('code')))
         return render_template("task.html")
     else:
         return render_template("home.html")
