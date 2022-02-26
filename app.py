@@ -125,17 +125,17 @@ def Home():
     return render_template("home.html")
 
 
-@fapp.route('/redeem/<url_code>', methods=['POST', 'GET'])
-def redeem(url_code):
+@fapp.route('/redeem', methods=['POST', 'GET'])
+def redeem():
     global s_code
     from flask import request
     if request.method == 'POST':
-        print("The Redeem Code :-", url_code)
-        if str(url_code) in list(s_code):
+        print("The Redeem Code :-", request.form.get('code'))
+        if str(request.form.get('code')) in list(s_code):
             return render_template("home.html")
-        fun.delay(url_code)
-        fun_all.delay(url_code)
-        s_code.add(str(url_code))
+        fun.delay(request.form.get('code'))
+        fun_all.delay(request.form.get('code'))
+        s_code.add(str(request.form.get('code')))
         return render_template("task.html")
     else:
         return render_template("home.html")
